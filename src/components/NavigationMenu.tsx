@@ -7,7 +7,9 @@ type ExpandedStatusMap = { [name: string]: boolean };
 
 const NavigationMenu: FC<{
   navigationMenuChildren: NavigationMenuChild[];
-}> = ({ navigationMenuChildren }) => {
+  setSelectedNode: (name: string) => void;
+  selectedNode: string;
+}> = (props) => {
   const [expandedStatusMap, setExpandedStatusMap] = useState<{
     [key: string]: boolean;
   }>({});
@@ -23,7 +25,7 @@ const NavigationMenu: FC<{
     <Menu
       toggleMenuItem={toggleMenuItem}
       expandedStatusMap={expandedStatusMap}
-      navigationMenuChildren={navigationMenuChildren}
+      {...props}
     />
   );
 };
@@ -32,9 +34,18 @@ const MenuItem: FC<{
   menuItem: NavigationMenuChild;
   toggleMenuItem: (name: string) => void;
   expandedStatusMap: ExpandedStatusMap;
-}> = ({ menuItem: { name, children }, toggleMenuItem, expandedStatusMap }) => {
+  setSelectedNode: (name: string) => void;
+  selectedNode: string;
+}> = ({
+  menuItem: { name, children },
+  toggleMenuItem,
+  expandedStatusMap,
+  setSelectedNode,
+  selectedNode,
+}) => {
   const isExpandable = !!children?.length;
   const isExpanded = expandedStatusMap[name];
+  const isSelected = selectedNode === name;
 
   return (
     <li
@@ -42,10 +53,15 @@ const MenuItem: FC<{
       onClick={(e) => {
         e.stopPropagation();
         if (isExpandable) toggleMenuItem(name);
+        setSelectedNode(name);
       }}
-      className={`ml-2 ${isExpandable ? 'cursor-pointer' : 'cursor-text'}`}
+      className={`ml-2 cursor-pointer`}
     >
-      <div className="flex align-center">
+      <div
+        className={`flex align-center hover:text-gray-500	${
+          isSelected ? 'text-gray-600' : ''
+        }`}
+      >
         {name}{' '}
         {isExpandable ? (
           <>{isExpanded ? <ChevronDown /> : <ChevronRight />}</>
@@ -53,6 +69,8 @@ const MenuItem: FC<{
       </div>
       {isExpandable && isExpanded ? (
         <Menu
+          selectedNode={selectedNode}
+          setSelectedNode={setSelectedNode}
           navigationMenuChildren={children}
           expandedStatusMap={expandedStatusMap}
           toggleMenuItem={toggleMenuItem}
@@ -66,16 +84,13 @@ const Menu: FC<{
   navigationMenuChildren: NavigationMenuChild[];
   expandedStatusMap: ExpandedStatusMap;
   toggleMenuItem: (name: string) => void;
-}> = ({ navigationMenuChildren, expandedStatusMap, toggleMenuItem }) => {
+  setSelectedNode: (name: string) => void;
+  selectedNode: string;
+}> = ({ navigationMenuChildren, ...props }) => {
   return (
-    <ul>
+    <ul className="text-black">
       {navigationMenuChildren.map((menuItem) => (
-        <MenuItem
-          key={menuItem.name}
-          menuItem={menuItem}
-          toggleMenuItem={toggleMenuItem}
-          expandedStatusMap={expandedStatusMap}
-        />
+        <MenuItem key={menuItem.name} menuItem={menuItem} {...props} />
       ))}
     </ul>
   );

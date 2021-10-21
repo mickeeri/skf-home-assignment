@@ -5,7 +5,13 @@ import user from '@testing-library/user-event';
 
 describe('NavigationMenu', () => {
   test("the child's open state is not affected by the parents open state", () => {
-    render(<NavigationMenu navigationMenuChildren={navigationMenuData.data} />);
+    render(
+      <NavigationMenu
+        setSelectedNode={() => {}}
+        selectedNode=""
+        navigationMenuChildren={navigationMenuData.data}
+      />,
+    );
 
     // Open up node 1 and sub-nodes
     user.click(screen.getByText('Some node 1'));
