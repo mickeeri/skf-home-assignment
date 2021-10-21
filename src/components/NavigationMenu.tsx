@@ -58,10 +58,10 @@ const MenuItem: FC<{
           setSelectedNode(name);
         }
       }}
-      className={`ml-2 cursor-pointer`}
+      className="ml-2 cursor-pointer"
     >
       <div
-        className={`flex align-center hover:text-gray-500	${
+        className={`flex items-center hover:text-gray-500	${
           isSelected ? 'text-gray-600' : ''
         }`}
       >
