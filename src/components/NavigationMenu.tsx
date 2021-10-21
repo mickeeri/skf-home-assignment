@@ -52,8 +52,11 @@ const MenuItem: FC<{
       key={name}
       onClick={(e) => {
         e.stopPropagation();
-        if (isExpandable) toggleMenuItem(name);
-        setSelectedNode(name);
+        if (isExpandable) {
+          toggleMenuItem(name);
+        } else {
+          setSelectedNode(name);
+        }
       }}
       className={`ml-2 cursor-pointer`}
     >

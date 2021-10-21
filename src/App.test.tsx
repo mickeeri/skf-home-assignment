@@ -24,8 +24,11 @@ describe('App', () => {
 
     const firstNode = await screen.findByText('Some node 1');
 
+    // Click until all nodes are expanded
     user.click(firstNode);
+    user.click(screen.getByText('Some node 1.1'));
+    user.click(screen.getByText('Some node 1.1.1'));
 
-    expect(screen.getByRole('main')).toHaveTextContent('Some node 1');
+    expect(screen.getByRole('main')).toHaveTextContent('Some node 1.1.1');
   });
 });
