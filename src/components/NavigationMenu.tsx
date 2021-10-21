@@ -3,12 +3,38 @@ import NavigationMenuChild from '../interfaces/NavigationMenuChild';
 import { ReactComponent as ChevronDown } from '../icons/chevron-down.svg';
 import { ReactComponent as ChevronRight } from '../icons/chevron-right.svg';
 
+type ExpandedStatusMap = { [name: string]: boolean };
+
+const NavigationMenu: FC<{
+  navigationMenuChildren: NavigationMenuChild[];
+}> = ({ navigationMenuChildren }) => {
+  const [expandedStatusMap, setExpandedStatusMap] = useState<{
+    [key: string]: boolean;
+  }>({});
+
+  const toggleMenuItem = (name: string) => {
+    setExpandedStatusMap({
+      ...expandedStatusMap,
+      [name]: !expandedStatusMap[name],
+    });
+  };
+
+  return (
+    <Menu
+      toggleMenuItem={toggleMenuItem}
+      expandedStatusMap={expandedStatusMap}
+      navigationMenuChildren={navigationMenuChildren}
+    />
+  );
+};
+
 const MenuItem: FC<{
   menuItem: NavigationMenuChild;
-  isExpanded: boolean;
   toggleMenuItem: (name: string) => void;
-}> = ({ menuItem: { name, children }, isExpanded, toggleMenuItem }) => {
+  expandedStatusMap: ExpandedStatusMap;
+}> = ({ menuItem: { name, children }, toggleMenuItem, expandedStatusMap }) => {
   const isExpandable = !!children?.length;
+  const isExpanded = expandedStatusMap[name];
 
   return (
     <li
@@ -26,36 +52,29 @@ const MenuItem: FC<{
         ) : null}
       </div>
       {isExpandable && isExpanded ? (
-        <NavigationMenu navigationMenuChildren={children} />
+        <Menu
+          navigationMenuChildren={children}
+          expandedStatusMap={expandedStatusMap}
+          toggleMenuItem={toggleMenuItem}
+        />
       ) : null}
     </li>
   );
 };
 
-const NavigationMenu: FC<{ navigationMenuChildren: NavigationMenuChild[] }> = ({
-  navigationMenuChildren,
-}) => {
-  const [expandedStatusMap, setExpandedStatusMap] = useState<{
-    [key: string]: boolean;
-  }>({});
-
-  const toggleMenuItem = (name: string) => {
-    setExpandedStatusMap({
-      ...expandedStatusMap,
-      [name]: !expandedStatusMap[name],
-    });
-  };
-
-  console.log(expandedStatusMap);
-
+const Menu: FC<{
+  navigationMenuChildren: NavigationMenuChild[];
+  expandedStatusMap: ExpandedStatusMap;
+  toggleMenuItem: (name: string) => void;
+}> = ({ navigationMenuChildren, expandedStatusMap, toggleMenuItem }) => {
   return (
     <ul>
       {navigationMenuChildren.map((menuItem) => (
         <MenuItem
           key={menuItem.name}
           menuItem={menuItem}
-          isExpanded={expandedStatusMap[menuItem.name]}
           toggleMenuItem={toggleMenuItem}
+          expandedStatusMap={expandedStatusMap}
         />
       ))}
     </ul>
